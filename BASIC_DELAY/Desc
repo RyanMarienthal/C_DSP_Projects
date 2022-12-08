@@ -1,0 +1,1 @@
+This delay takes in a DELAY_TIME and outputs a text file with 4 columns, 1 and 3 are just the Tick value and 2 and 4 are Current display and delayed Display respectively.
