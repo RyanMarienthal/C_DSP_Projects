@@ -1,0 +1,37 @@
+#include <iostream>
+//operative variables
+double T;
+float CURRENT_OUT;
+FILE* DELAY_FILE;
+
+//USER EDITED, set delay time
+unsigned int DELAY_TIME = 3000;
+
+int main()
+{
+	//allocate memory, dependent on delay time
+	double* DATA = (double*)calloc(DELAY_TIME, sizeof(double) * DELAY_TIME);
+	//set output file
+	DELAY_FILE = fopen("INSERT FILEPATH HERE", "w");
+	//Set to while(1) for continous operation, runtime is arbitrary for testing
+	while (T<DELAY_TIME*2) {
+		//set current out to be the input function
+		CURRENT_OUT = ((1/T*10)*cos(T)+(3*sin(T)/10)+(3*cos((T/0.9) + 900))+(4*cos(T/100)));
+		//stores output
+		DATA[0] = CURRENT_OUT;
+		//"shifts" data so that audio is delayed the number of values in DELAY_TIME
+		memmove(DATA+1, DATA, sizeof(double) * DELAY_TIME-1);
+		//output to file, formatted as white spaces in between for GNUplot
+		fprintf(DELAY_FILE, "%f", T);
+		fprintf(DELAY_FILE, " ");
+		fprintf(DELAY_FILE, "%f", CURRENT_OUT);
+		fprintf(DELAY_FILE, " ");
+		fprintf(DELAY_FILE, "%f", T);
+		fprintf(DELAY_FILE, " ");
+		fprintf(DELAY_FILE, "%f", DATA[DELAY_TIME - 1]);
+		fprintf(DELAY_FILE, "\n");
+		//incremented by 0.1 so functions are displayed accurately
+		T+= 0.1;
+	}
+	fclose(DELAY_FILE);
+}
