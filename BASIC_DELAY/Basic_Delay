@@ -1,7 +1,7 @@
 #include <iostream>
 //operative variables
 double T;
-float CURRENT_OUT;
+double CURRENT_OUT;
 FILE* DELAY_FILE;
 
 //USER EDITED, set delay time
