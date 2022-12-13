@@ -1,1 +1,87 @@
+#include <iostream>
+//operative variables
+double T;
+unsigned int POS_COUNTER;
+unsigned int LEADING_PLACE;
+double CURRENT_OUT;
+unsigned int LUSH_POS;
+FILE* DELAY_FILE;
 
+//USER EDITED VARIABLES
+//set delay
+unsigned int DELAY_TIME = 10000;
+
+//EXTRA FEEDBACK, additional feature, 0 is off 1 is on
+bool EXTRA_FEEDBACK = 0;
+//Changes position of the extra feedback, the higher the value, the sooner it will be
+unsigned int EXTRA_AMT = 2;
+
+int main()
+{
+	//allocate memory, dependent on delay time
+	double* DATA = (double*)calloc(DELAY_TIME, sizeof(double) * DELAY_TIME);
+
+	//set output file
+	DELAY_FILE = fopen("INSERT FULL FILEPATH HERE", "w");
+
+	//Set to while(1) for continous operation, runtime is arbitrary for testing
+	while (T < DELAY_TIME * 10) {
+		//CURRENT OUT WILL BE AN ADC INPUT, ARBITRARY FUNCTION
+		CURRENT_OUT = pow(2.7, -(T / 1000)) * (cos(T / 10)+cos(100*T));
+		//FEEDBACK, to create the echo effect
+		CURRENT_OUT += DATA[LEADING_PLACE] / (DELAY_TIME/2000);
+		
+
+		//RUN THROUGH A LIST, LEADING PLACE WILL BE THE DELAYED PLACE 
+		//BECAUSE IT IS "DELAY_TIME" PLACES BEHND THE POS_COUNTER WHICH IS "CURRENT"
+		if (POS_COUNTER < DELAY_TIME-1)
+		{
+			POS_COUNTER++;
+			LEADING_PLACE = POS_COUNTER + 1;
+		}
+		else if (POS_COUNTER == DELAY_TIME - 1)
+		{
+			POS_COUNTER++;
+			LEADING_PLACE = 0;
+		}
+		else
+		{
+			POS_COUNTER = 0;
+			LEADING_PLACE = POS_COUNTER + 1;
+		}
+		//CHECK POSITION VALIDITY, ADJUSTS POSITION
+		int POS_CHECK = POS_COUNTER - (DELAY_TIME/EXTRA_AMT );
+		//PLACES THE POSITION AN AMOUNT OF VALUES BEHIND THE CURRENT
+		if (POS_CHECK < 0) {
+			LUSH_POS = DELAY_TIME - (POS_CHECK);
+		}
+		else
+		{
+			LUSH_POS = POS_CHECK;
+		}
+		//TURNS ON OR OFF EXTRA FEEDBACK
+		if (EXTRA_FEEDBACK)
+		{
+			CURRENT_OUT += DATA[LUSH_POS] / 10;
+		}
+		//WRITE CURRENT VALUE TO MEMORY
+		DATA[POS_COUNTER] = CURRENT_OUT;
+		
+
+
+
+		//output to file, formatted as white spaces in between for GNUplot
+    //GNUPLOT COMMAND: plot "FULL FILEPATH HERE" using 1:4 with lines
+		fprintf(DELAY_FILE, "%f", T);
+		fprintf(DELAY_FILE, " ");
+		fprintf(DELAY_FILE, "%f", CURRENT_OUT);
+		fprintf(DELAY_FILE, " ");
+		fprintf(DELAY_FILE, "%f", T);
+		fprintf(DELAY_FILE, " ");
+		fprintf(DELAY_FILE, "%f", DATA[LEADING_PLACE]);
+		fprintf(DELAY_FILE, "\n");
+		//incremented by 0.1 so functions are displayed accurately
+		T += 1;
+	}
+	fclose(DELAY_FILE);
+}
