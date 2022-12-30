@@ -29,7 +29,7 @@ int main()
 	float* CURRENT_STRG = (float*)malloc(sizeof(float) * TIME);
 	
 	//set output file
-	SG_FILE = fopen("C:/Users/ryanm/OneDrive/Documents/C OUT/SG.txt", "w");
+	SG_FILE = fopen("ROOT DIRECTORY", "w");
 	
 	//Set to while(1) for continous operation, runtime is arbitrary for testing
 	while (T < 2000) 
