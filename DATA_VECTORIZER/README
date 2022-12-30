@@ -1,0 +1,3 @@
+This Project takes a function(or input data), and stores it as a vector
+This is for ease of calculation, a function that exponentially decays is ready to be activated in the user varaibles VECTOR_OP bool
+The two PNG files show the original and processed data of this function
